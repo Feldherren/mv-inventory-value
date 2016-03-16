@@ -2,10 +2,6 @@
  * @plugindesc Calculates the value of all items in inventory.
  * @author Feldherren
  *
- * @param Include Gold?
- * @desc Whether to include current currency in evaluated total by default; set 'true' to include, 'false' to exclude.
- * @default true
- *
  * @param Item Value Variable
  * @desc ID of variable in which total item value will be stored.
  * @default 1
@@ -25,6 +21,8 @@
  * @help Inventory Value v1.0, by Feldherren (rpaliwoda AT googlemail.com)
 
 Plugin commands:
+INVENTORYVALUE
+INVENTORYVALUE [inventory]
 
 Free for use with commercial projects, though I'd appreciate being
 contacted if you do use it in any games, just to know.
@@ -36,7 +34,8 @@ and outputs the results into specified variables.
 
 var parameters = PluginManager.parameters('Feld_InventoryValue');
 
-var inventory = $gameParty.getInventory("hoard");
+var inventory = $gameParty.getInventory("hoard"); // this needs fixing - implement plugin command that either gets the default inventory or a named inventory
+
 var weaponvalue = 0;
 for (var key in inventory.weapons)
 {
@@ -58,13 +57,8 @@ itemvalue += $dataItems[key].price * inventory.items[key];
 }
 $gameVariables.setValue(parameters["Item Value Variable"], itemvalue);
 
-if (parameters["Include Gold?"] == "true")
-{
-	$gameVariables.setValue(parameters["Total Value Variable"], weaponvalue + armorvalue + itemvalue + $gameParty.gold());
-}
-else
-{
-	$gameVariables.setValue(parameters["Total Value Variable"], weaponvalue + armorvalue + itemvalue );
-}
+
+$gameVariables.setValue(parameters["Total Value Variable"], weaponvalue + armorvalue + itemvalue );
+
 
 })();
