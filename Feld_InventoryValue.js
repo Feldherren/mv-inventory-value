@@ -22,7 +22,10 @@
 
 Plugin commands:
 INVENTORYVALUE
+Calculates the value of items in the inventory.
 INVENTORYVALUE [inventory]
+Calculates the value of items in the named inventory; compatible with 
+TsukiHime's Multiple Inventories plugin.
 
 Free for use with commercial projects, though I'd appreciate being
 contacted if you do use it in any games, just to know.
@@ -30,35 +33,61 @@ contacted if you do use it in any games, just to know.
 Calculates the value of all items, weapons and armour an inventory 
 and outputs the results into specified variables.
  */ 
-(function() {
+(function(){
+	var parameters = PluginManager.parameters('Feld_InventoryValue');
 
-var parameters = PluginManager.parameters('Feld_InventoryValue');
+	function calculateInventoryValue(inventory) 
+	{
 
-var inventory = $gameParty.getInventory("hoard"); // this needs fixing - implement plugin command that either gets the default inventory or a named inventory
+		var inv = inventory;
 
-var weaponvalue = 0;
-for (var key in inventory.weapons)
-{
-weaponvalue += $dataWeapons[key].price * inventory.weapons[key];
-}
-$gameVariables.setValue(parameters["Weapon Value Variable"], weaponvalue);
+		var weaponvalue = 0;
+		for (var key in inv.weapons)
+		{
+			weaponvalue += $dataWeapons[key].price * inv.weapons[key];
+		}
+		$gameVariables.setValue(parameters["Weapon Value Variable"], weaponvalue);
 
-var armorvalue = 0;
-for (var key in inventory.armors)
-{
-armorvalue += $dataArmors[key].price * inventory.armors[key];
-}
-$gameVariables.setValue(parameters["Armour Value Variable"], armorvalue);
+		var armorvalue = 0;
+		for (var key in inv.armors)
+		{
+			armorvalue += $dataArmors[key].price * inv.armors[key];
+		}
+		$gameVariables.setValue(parameters["Armour Value Variable"], armorvalue);
 
-var itemvalue = 0;
-for (var key in inventory.items)
-{
-itemvalue += $dataItems[key].price * inventory.items[key];
-}
-$gameVariables.setValue(parameters["Item Value Variable"], itemvalue);
-
-
-$gameVariables.setValue(parameters["Total Value Variable"], weaponvalue + armorvalue + itemvalue );
+		var itemvalue = 0;
+		for (var key in inv.items)
+		{
+			itemvalue += $dataItems[key].price * inv.items[key];
+		}
+		$gameVariables.setValue(parameters["Item Value Variable"], itemvalue);
 
 
+		$gameVariables.setValue(parameters["Total Value Variable"], weaponvalue + armorvalue + itemvalue );
+	}
+
+	var Feld_InventoryValue_aliasPluginCommand = Game_Interpreter.prototype.pluginCommand;
+
+	Game_Interpreter.prototype.pluginCommand = function(command, args)
+	{
+
+		Feld_InventoryValue_aliasPluginCommand.call(this,command,args);
+		if(command == "INVENTORYVALUE" && args[0] == null)
+		{
+			$gameMessage.add("Simple script command detected");
+			// this one isn't working
+			var i = {};
+			i.weapons = $gameParty.weapons;
+			i.armors = $gameParty.armors;
+			i.items = $gameParty.items;
+			calculateInventoryValue(i);
+		}
+		else if(command == "INVENTORYVALUE" && args[0] != null)
+		{
+			//$gameMessage.add("TsukiHime multiple inventory script command detected");
+			//$gameMessage.add("inventory: '" + args[0] + "'");
+			// this IS working, yay
+			calculateInventoryValue($gameParty.getInventory(args[0]));
+		}
+	}
 })();
