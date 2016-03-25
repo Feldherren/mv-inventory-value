@@ -1,5 +1,6 @@
 /*:
- * @plugindesc Calculates the value of all items in inventory.
+ * @plugindesc Calculates the value of all items in inventory, 
+ * when using Tsukihime's Multiple Inventories script.
  * @author Feldherren
  *
  * @param Item Value Variable
@@ -21,29 +22,28 @@
  * @help Inventory Value v1.0, by Feldherren (rpaliwoda AT googlemail.com)
 
 Plugin commands:
-INVENTORYVALUE
-Calculates the value of items in the inventory.
 INVENTORYVALUE [inventory]
-Calculates the value of items in the named inventory; compatible with 
-TsukiHime's Multiple Inventories plugin.
+Calculates the value of items in the named inventory.
 
 Free for use with commercial projects, though I'd appreciate being
 contacted if you do use it in any games, just to know.
 
 Calculates the value of all items, weapons and armour an inventory 
-and outputs the results into specified variables.
+and outputs the results into specified variables. Requires Tsukihime's
+Multiple Inventories script.
  */ 
 (function(){
 	var parameters = PluginManager.parameters('Feld_InventoryValue');
 
 	function calculateInventoryValue(inventory) 
 	{
-
 		var inv = inventory;
 
 		var weaponvalue = 0;
 		for (var key in inv.weapons)
 		{
+			console.log($dataWeapons[key]);
+			console.log(inv.weapons);
 			weaponvalue += $dataWeapons[key].price * inv.weapons[key];
 		}
 		$gameVariables.setValue(parameters["Weapon Value Variable"], weaponvalue);
@@ -72,17 +72,7 @@ and outputs the results into specified variables.
 	{
 
 		Feld_InventoryValue_aliasPluginCommand.call(this,command,args);
-		if(command == "INVENTORYVALUE" && args[0] == null)
-		{
-			$gameMessage.add("Simple script command detected");
-			// this one isn't working
-			var i = {};
-			i.weapons = $gameParty.weapons;
-			i.armors = $gameParty.armors;
-			i.items = $gameParty.items;
-			calculateInventoryValue(i);
-		}
-		else if(command == "INVENTORYVALUE" && args[0] != null)
+		if(command == "INVENTORYVALUE" && args[0] != null)
 		{
 			//$gameMessage.add("TsukiHime multiple inventory script command detected");
 			//$gameMessage.add("inventory: '" + args[0] + "'");
