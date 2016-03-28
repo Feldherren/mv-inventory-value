@@ -1,6 +1,6 @@
 /*:
  * @plugindesc Calculates the value of all items in inventory, 
- * when using Tsukihime's Multiple Inventories script.
+ * when using Tsukihime's Inventory Core script.
  * @author Feldherren
  *
  * @param Item Value Variable
@@ -21,16 +21,16 @@
  *
  * @help Inventory Value v1.0, by Feldherren (rpaliwoda AT googlemail.com)
 
+Calculates the value of all items, weapons and armour in an inventory, 
+and outputs the results into specified variables. Requires Tsukihime's
+Inventory Core script (http://himeworks.com/2016/03/inventory-core/).
+
 Plugin commands:
-INVENTORYVALUE [inventory]
+INVENTORYVALUE [inventory ID]
 Calculates the value of items in the named inventory.
 
 Free for use with commercial projects, though I'd appreciate being
 contacted if you do use it in any games, just to know.
-
-Calculates the value of all items, weapons and armour an inventory 
-and outputs the results into specified variables. Requires Tsukihime's
-Multiple Inventories script.
  */ 
 (function(){
 	var parameters = PluginManager.parameters('Feld_InventoryValue');
@@ -40,25 +40,24 @@ Multiple Inventories script.
 		var inv = inventory;
 
 		var weaponvalue = 0;
-		for (var key in inv.weapons)
+		for (var key in inv._weapons)
 		{
 			console.log($dataWeapons[key]);
-			console.log(inv.weapons);
-			weaponvalue += $dataWeapons[key].price * inv.weapons[key];
+			weaponvalue += $dataWeapons[key].price * inv._weapons[key];
 		}
 		$gameVariables.setValue(parameters["Weapon Value Variable"], weaponvalue);
 
 		var armorvalue = 0;
-		for (var key in inv.armors)
+		for (var key in inv._armors)
 		{
-			armorvalue += $dataArmors[key].price * inv.armors[key];
+			armorvalue += $dataArmors[key].price * inv._armors[key];
 		}
 		$gameVariables.setValue(parameters["Armour Value Variable"], armorvalue);
 
 		var itemvalue = 0;
-		for (var key in inv.items)
+		for (var key in inv._items)
 		{
-			itemvalue += $dataItems[key].price * inv.items[key];
+			itemvalue += $dataItems[key].price * inv._items[key];
 		}
 		$gameVariables.setValue(parameters["Item Value Variable"], itemvalue);
 
@@ -74,9 +73,6 @@ Multiple Inventories script.
 		Feld_InventoryValue_aliasPluginCommand.call(this,command,args);
 		if(command == "INVENTORYVALUE" && args[0] != null)
 		{
-			//$gameMessage.add("TsukiHime multiple inventory script command detected");
-			//$gameMessage.add("inventory: '" + args[0] + "'");
-			// this IS working, yay
 			calculateInventoryValue($gameParty.getInventory(args[0]));
 		}
 	}
