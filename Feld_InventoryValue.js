@@ -26,6 +26,8 @@ and outputs the results into specified variables. Requires Tsukihime's
 Inventory Core script (http://himeworks.com/2016/03/inventory-core/).
 
 Plugin commands:
+INVENTORYVALUE
+Calculates the value of items in the current inventory.
 INVENTORYVALUE [inventory ID]
 Calculates the value of items in the named inventory.
 
@@ -74,6 +76,10 @@ contacted if you do use it in any games, just to know.
 		if(command == "INVENTORYVALUE" && args[0] != null)
 		{
 			calculateInventoryValue($gameParty.getInventory(args[0]));
+		}
+		else if(command == "INVENTORYVALUE")
+		{
+			calculateInventoryValue($gameParty.inventory());
 		}
 	}
 })();
